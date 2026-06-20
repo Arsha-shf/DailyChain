@@ -7,7 +7,7 @@ from datetime import datetime
 def dashboard_home(request):
     context = {
         'name': request.user.email.split('@')[0],
-        'greeting': 
+        'greeting':
             "Good morning" if datetime.now().hour < 12 else
             "Good afternoon" if datetime.now().hour < 18 else
             "Good evening",
