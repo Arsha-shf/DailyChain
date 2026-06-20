@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0a0a0a]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log out · DailyChain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-[#0a0a0a] text-neutral-200 flex items-center justify-center px-4">
+
+    <main class="w-full max-w-md">
+        <div class="rounded-xl border border-neutral-800 bg-neutral-950/60 shadow-2xl shadow-black/40 p-8">
+
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-600/20">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6 text-red-400"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1"/>
+                    </svg>
+                </div>
+
+                <h1 class="text-xl font-semibold text-white">
+                    Log out of DailyChain
+                </h1>
+
+                <p class="mt-2 text-sm text-neutral-400">
+                    Are you sure you want to sign out?
+                </p>
+            </div>
+
+            <form method="POST" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="w-full rounded-lg bg-red-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-red-500">
+                    Log out
+                </button>
+            </form>
+
+            <a
+                href="/"
+                class="mt-4 block w-full rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-3 text-center text-sm text-neutral-300 transition hover:bg-neutral-800">
+                Cancel
+            </a>
+
+        </div>
+    </main>
+
+</body>
+</html>

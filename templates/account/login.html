@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0a0a0a]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in · DailyChain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-[#0a0a0a] text-neutral-200 antialiased flex items-center justify-center px-4">
+
+    <main class="w-full max-w-md">
+        <div class="rounded-xl border border-neutral-800 bg-neutral-950/60 shadow-2xl shadow-black/40 p-8">
+
+            <!-- Brand -->
+            <div class="mb-8 flex flex-col items-center text-center">
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
+                    <span class="text-sm font-bold text-white">DC</span>
+                </div>
+
+                <h1 class="text-xl font-semibold tracking-tight text-white">
+                    Sign in to DailyChain
+                </h1>
+
+                <p class="mt-1 text-sm text-neutral-400">
+                    Welcome back. Enter your details to continue.
+                </p>
+            </div>
+
+            <form method="POST" action="{% url 'account_login' %}" class="flex flex-col gap-5">
+                {% csrf_token %}
+
+                <div class="flex flex-col gap-1.5">
+                    <label for="login" class="text-sm font-medium text-neutral-300">
+                        Email
+                    </label>
+
+                    <input
+                        id="login"
+                        name="login"
+                        type="email"
+                        autocomplete="email"
+                        required
+                        placeholder="you@example.com"
+                        class="w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder-neutral-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40"
+                    />
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="text-sm font-medium text-neutral-300">
+                            Password
+                        </label>
+
+                        <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300">
+                            Forgot password?
+                        </a>
+                    </div>
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        placeholder="••••••••"
+                        class="w-full rounded-lg border border-neutral-800 bg-neutral-900 px-3 py-2.5 text-sm text-white placeholder-neutral-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40"
+                    />
+                </div>
+
+                <button
+                    type="submit"
+                    class="mt-1 w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/60 focus:ring-offset-2 focus:ring-offset-[#0a0a0a]">
+                    Sign in
+                </button>
+            </form>
+        </div>
+
+        <p class="mt-6 text-center text-sm text-neutral-400">
+            Don't have an account?
+            <a href="{% url 'account_signup' %}" class="font-medium text-indigo-400 hover:text-indigo-300">
+                Sign up
+            </a>
+        </p>
+    </main>
+
+</body>
+</html>
