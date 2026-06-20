@@ -1,25 +1,127 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard — DailyChain{% endblock %}
-
 {% block content %}
-<div class="mb-8">
-    <h1 class="text-3xl font-bold text-white">Good to see you 👋</h1>
-    <p class="text-gray-400 mt-1">Here's your day at a glance.</p>
+
+<div class="relative overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-950/60 p-8 shadow-2xl shadow-black/40">
+    <div class="absolute right-0 top-0 h-40 w-40 rounded-full bg-indigo-600/10 blur-3xl"></div>
+    <div class="relative">
+        <p class="text-sm uppercase tracking-widest text-indigo-400">
+            DailyChain
+        </p>
+        <h1 class="mt-2 text-4xl font-bold text-white">
+            {{ greeting }}, {{ name }}!
+        </h1>
+        <p class="mt-3 text-neutral-400">
+            Welcome back. Here's what's happening today.
+        </p>
+        {% if last_login %}
+        <div class="mt-5 flex items-center gap-2 text-sm text-neutral-500">
+            <div class="h-2 w-2 rounded-full bg-green-500"></div>
+            Last login: {{ last_login|date:"N j, Y, g:i a" }}
+        </div>
+        {% endif %}
+    </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
-        <p class="text-gray-400 text-sm">Habits Today</p>
-        <p class="text-4xl font-bold text-white mt-2">0/0</p>
+<div class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-3">
+
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-950/60 p-6 transition hover:border-indigo-500">
+        <div class="flex items-center justify-between">
+            <p class="text-neutral-400 text-sm">
+                Habits Today
+            </p>
+            <div class="text-indigo-400">
+                ✓
+            </div>
+        </div>
+        <h2 class="mt-4 text-5xl font-bold text-white">
+            0/0
+        </h2>
+        <p class="mt-2 text-sm text-neutral-500">
+            Keep your streak alive.
+        </p>
     </div>
-    <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
-        <p class="text-gray-400 text-sm">Tasks Due</p>
-        <p class="text-4xl font-bold text-white mt-2">0</p>
+
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-950/60 p-6 transition hover:border-blue-500">
+        <div class="flex items-center justify-between">
+            <p class="text-neutral-400 text-sm">
+                Tasks Due
+            </p>
+            <div class="text-blue-400">
+                ⏳
+            </div>
+        </div>
+        <h2 class="mt-4 text-5xl font-bold text-white">
+            0
+        </h2>
+        <p class="mt-2 text-sm text-neutral-500">
+            Nothing urgent right now.
+        </p>
     </div>
-    <div class="bg-gray-900 rounded-xl p-6 border border-gray-800">
-        <p class="text-gray-400 text-sm">Spent This Month</p>
-        <p class="text-4xl font-bold text-white mt-2">₺0</p>
+
+    <div class="rounded-2xl border border-neutral-800 bg-neutral-950/60 p-6 transition hover:border-emerald-500">
+        <div class="flex items-center justify-between">
+            <p class="text-neutral-400 text-sm">
+                Monthly Spending
+            </p>
+            <div class="text-emerald-400">
+                ₺
+            </div>
+        </div>
+        <h2 class="mt-4 text-5xl font-bold text-white">
+            ₺0
+        </h2>
+        <p class="mt-2 text-sm text-neutral-500">
+            Looking good so far.
+        </p>
+    </div>
+</div>
+
+<div class="mt-8 rounded-3xl border border-neutral-800 bg-gradient-to-br from-indigo-600/10 to-neutral-950 p-8">
+    <div class="text-indigo-400 text-sm font-medium uppercase tracking-wider">
+        Quote of the Day
+    </div>
+    <blockquote class="mt-4 text-xl leading-relaxed text-white italic">
+        "{{ random_quote.quote }}"
+        — {{ random_quote.author }}
+    </blockquote>
+</div>
+
+<div class="mt-8 rounded-3xl border border-neutral-800 bg-neutral-950/60 p-8">
+    <h2 class="text-xl font-semibold text-white">
+        Quick Actions
+    </h2>
+    <div class="grid grid-cols-1 gap-4 mt-6 md:grid-cols-3">
+        <a href="#"
+           class="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 hover:border-indigo-500 transition">
+            <div class="text-2xl">✓</div>
+            <h3 class="mt-3 text-white font-semibold">
+                Add Habit
+            </h3>
+            <p class="mt-1 text-sm text-neutral-500">
+                Build consistency every day.
+            </p>
+        </a>
+        <a href="#"
+           class="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 hover:border-blue-500 transition">
+            <div class="text-2xl">📝</div>
+            <h3 class="mt-3 text-white font-semibold">
+                Create Task
+            </h3>
+            <p class="mt-1 text-sm text-neutral-500">
+                Organize your work.
+            </p>
+        </a>
+        <a href="#"
+           class="rounded-2xl border border-neutral-800 bg-neutral-900 p-5 hover:border-emerald-500 transition">
+            <div class="text-2xl">💸</div>
+            <h3 class="mt-3 text-white font-semibold">
+                Add Expense
+            </h3>
+            <p class="mt-1 text-sm text-neutral-500">
+                Stay on top of your finances.
+            </p>
+        </a>
     </div>
 </div>
 {% endblock %}
