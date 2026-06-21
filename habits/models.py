@@ -21,10 +21,12 @@ class Habit(models.Model):
         choices=FrequencyChoices.choices,
         default=FrequencyChoices.DAILY
     )
+    class Meta:
+        unique_together = ('user', 'name', 'frequency')
 
     def __str__(self):
         return self.name
-
+    
 class HabitLog(models.Model):
     habit = models.ForeignKey("Habit", verbose_name=_(""), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("Date"))
