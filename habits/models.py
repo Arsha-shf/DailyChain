@@ -26,7 +26,7 @@ class Habit(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 class HabitLog(models.Model):
     habit = models.ForeignKey("Habit", verbose_name=_(""), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("Date"))

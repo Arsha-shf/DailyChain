@@ -2,13 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
-from .models import Habit
+from .models import Habit, HabitLog
 from .forms import HabitForm
+from datetime import date
 
 @login_required
 def habits(request):
     habits = Habit.objects.filter(user=request.user, is_active=True)
-    return render(request, 'habits/habits.html', {'habits': habits})
+    today = date.today()
+    completed_today = HabitLog.objects.filter(
+        habit__user=request.user,
+        date=today
+    ).values_list('habit_id', flat=True)
+    return render(request, 'habits/habits.html', {
+        'habits': habits,
+        'completed_today': completed_today
+    })
 
 @login_required
 def create_habit(request):
@@ -48,3 +57,14 @@ def delete_habit(request, habit_id):
         messages.success(request, 'Habit deleted successfully :)')
         return redirect('habits')
     return render(request, 'habits/delete_habit.html', {'habit': habit})
+
+@login_required
+def toggle_habit(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    today = date.today()
+    log = HabitLog.objects.filter(habit=habit, date=today).first()
+    if log:
+        log.delete()
+    else:
+        HabitLog.objects.create(habit=habit, date=today)
+    return redirect('habits')
