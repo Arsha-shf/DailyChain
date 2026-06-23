@@ -49,7 +49,8 @@ class Habit(models.Model):
         for i in range(1,( len(dates))):
             if dates[i] - dates[i-1] == timedelta(days=1):
                 current_streak+=1
-            else: current_streak=1
+            else:
+                current_streak=1
             if current_streak > longest_streak:
                 longest_streak = current_streak
         return longest_streak
