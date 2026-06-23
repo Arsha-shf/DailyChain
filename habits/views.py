@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from .models import Habit, HabitLog
 from .forms import HabitForm
-from datetime import date
+from datetime import date, timedelta
 
 @login_required
 def habits(request):
@@ -68,3 +68,29 @@ def toggle_habit(request, habit_id):
     else:
         HabitLog.objects.create(habit=habit, date=today)
     return redirect('habits')
+
+@login_required
+def habit_detail(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    today = date.today()
+    start_day = today - timedelta(days=83)
+    days = [
+        start_day + timedelta(days=i)
+        for i in range(84)
+    ]
+    logged_dates = set(
+        HabitLog.objects.filter(
+            habit=habit,
+            date__gte=start_day
+        ).values_list('date', flat=True)
+    )
+
+    return render(
+        request,
+        'habits/habit_detail.html',
+        {
+            'habit': habit,
+            'days': days,
+            'logged_dates': logged_dates,
+        }
+    )
