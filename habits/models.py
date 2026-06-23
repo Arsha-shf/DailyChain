@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from datetime import date, timedelta
 
 class FrequencyChoices(models.TextChoices):
     DAILY = 'daily', 'Daily'
@@ -21,6 +22,38 @@ class Habit(models.Model):
         choices=FrequencyChoices.choices,
         default=FrequencyChoices.DAILY
     )
+
+    def current_streak(self):
+        dates = set(
+            HabitLog.objects.filter(habit=self)
+            .values_list('date', flat=True)
+        )
+        streak = 0
+        current_day = date.today()
+
+        while current_day in dates:
+            streak+=1
+            current_day -= timedelta(days=1)
+        return streak
+
+    def longest_streak(self):
+        dates = sorted(
+            HabitLog.objects.filter(habit=self)
+            .values_list('date', flat=True)
+        )
+        if not dates:
+            return 0
+        current_streak = 1
+        longest_streak = 1
+
+        for i in range(1,( len(dates))):
+            if dates[i] - dates[i-1] == timedelta(days=1):
+                current_streak+=1
+            else: current_streak=1
+            if current_streak > longest_streak:
+                longest_streak = current_streak
+        return longest_streak
+
     class Meta:
         unique_together = ('user', 'name', 'frequency')
 
