@@ -26,8 +26,10 @@
 
                 <div>
 
-                    <h3 class="text-lg font-semibold text-white">
-                        {{ habit.name }}
+                    <h3>
+                        <a href="{% url 'habit_detail' habit.id %}" class="text-lg font-semibold text-white hover:text-indigo-400">
+                            {{ habit.name }}
+                        </a>
                     </h3>
 
                     <div class="mt-3 flex flex-wrap gap-2">
