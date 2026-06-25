@@ -54,6 +54,45 @@
 
 </div>
 
+<!-- Analytics -->
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Total Completions
+        </p>
+
+        <div class="text-3xl font-bold text-indigo-400">
+            {{ habit.total_completions }}
+        </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Success Rate
+        </p>
+
+        <div class="text-3xl font-bold text-green-400">
+            {{ habit.success_rate }}%
+        </div>
+
+        <p class="text-gray-500 mt-2 text-sm">
+            last 7 days
+        </p>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Best Day
+        </p>
+
+        <div class="text-3xl font-bold text-yellow-400">
+            {{ habit.best_day_of_week|default:"—" }}
+        </div>
+    </div>
+
+</div>
+
 <!-- Heatmap -->
 <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
 
