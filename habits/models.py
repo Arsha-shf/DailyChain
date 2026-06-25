@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from datetime import date, timedelta
+from collections import Counter
 
 class FrequencyChoices(models.TextChoices):
     DAILY = 'daily', 'Daily'
@@ -54,6 +55,31 @@ class Habit(models.Model):
             if current_streak > longest_streak:
                 longest_streak = current_streak
         return longest_streak
+
+    def total_completions(self):
+        logs = HabitLog.objects.filter(habit=self)
+        total = logs.count()
+        return total
+
+    def success_rate(self):
+        week_ago = date.today() - timedelta(days=7)
+        completions = HabitLog.objects.filter(
+            habit=self,
+            date__gte=week_ago
+        ).count()
+        rate = (completions/7) * 100
+        return round(min(rate, 100), 1)
+
+    def best_day_of_week(self):
+        logs = HabitLog.objects.filter(habit=self)
+        weekdays=[]
+        for log in logs:
+            day = log.date.strftime("%A")
+            weekdays.append(day)
+        if not weekdays:
+            return None
+        weekdays_count = Counter(weekdays)
+        return weekdays_count.most_common(1)[0][0]
 
     class Meta:
         unique_together = ('user', 'name', 'frequency')
