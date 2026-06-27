@@ -85,6 +85,7 @@ class Habit(models.Model):
 class HabitLog(models.Model):
     habit = models.ForeignKey("Habit", verbose_name=_(""), on_delete=models.CASCADE)
     date = models.DateField(verbose_name=_("Date"))
+    note = models.CharField(max_length=255, blank=True)
 
     class Meta:
         unique_together = ('habit', 'date')

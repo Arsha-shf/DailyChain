@@ -73,7 +73,8 @@ def toggle_habit(request, habit_id):
     if log:
         log.delete()
     else:
-        HabitLog.objects.create(habit=habit, date=today)
+        note = request.POST.get("note", "").strip()
+        HabitLog.objects.create(habit=habit, date=today, note=note)
     return redirect('habits')
 
 @login_required
@@ -81,16 +82,14 @@ def habit_detail(request, habit_id):
     habit = get_object_or_404(Habit, id=habit_id, user=request.user)
     today = date.today()
     start_day = today - timedelta(days=83)
-    days = [
-        start_day + timedelta(days=i)
-        for i in range(84)
-    ]
-    logged_dates = set(
-        HabitLog.objects.filter(
-            habit=habit,
-            date__gte=start_day
-        ).values_list('date', flat=True)
-    )
+    days = [start_day + timedelta(days=i) for i in range(84)]
+    logs = HabitLog.objects.filter(habit=habit, date__gte=start_day)
+    logged_dates = {log.date: log.note for log in logs}
+    return render(request, 'habits/habit_detail.html', {
+        'habit': habit,
+        'days': days,
+        'logged_dates': logged_dates,
+    })
 
     return render(
         request,
@@ -116,3 +115,32 @@ def reorder_habits(request):
             except Habit.DoesNotExist:
                 continue
         return JsonResponse({"status": "ok"})
+
+@login_required
+def archive_habit(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    if request.method == 'POST':
+        habit.is_active = False
+        habit.save()
+        return redirect('habits')
+    return render(request, 'habits/archive_habit.html', {'habit': habit})
+
+@login_required
+def archived_habits(request):
+    habits = Habit.objects.filter(
+        user=request.user,
+        is_active=False
+    ).order_by("-created_at")
+    return render(request, 'habits/archived_habits.html', {'habits':habits})
+
+@login_required
+def restore_habit(request, habit_id):
+    habit = get_object_or_404(
+        Habit,
+        id=habit_id,
+        user=request.user,
+        is_active=False
+    )
+    habit.is_active = True
+    habit.save()
+    return redirect("archived_habits")
