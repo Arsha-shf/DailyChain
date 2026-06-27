@@ -16,11 +16,19 @@
         </a>
     </div>
 
-    <div class="space-y-5 mt-8">
+    {% if pending_count > 0 %}
+    <div class="mt-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 p-4">
+        <p class="text-sm font-medium text-yellow-300">
+            ⚠️ You have {{ pending_count }} habit{{ pending_count|pluralize }} pending today.
+        </p>
+    </div>
+    {% endif %}
+
+    <div id="habits-list" class="space-y-5 mt-8">
 
         {% for habit in habits %}
 
-        <div class="rounded-2xl border border-neutral-800 bg-neutral-900 p-6 transition hover:border-indigo-500">
+        <div data-id="{{ habit.id }}" class="rounded-2xl border border-neutral-800 bg-neutral-900 p-6 transition hover:border-indigo-500">
 
             <div class="flex justify-between items-start">
 
@@ -43,7 +51,7 @@
                         </span>
 
                     </div>
-                    
+
                     <div class="mt-3 flex gap-4 text-xs text-neutral-500">
                         <span>🔥 {{ habit.current_streak }} day streak</span>
                         <span>🏆 Best: {{ habit.longest_streak }}</span>
@@ -52,7 +60,7 @@
                 </div>
 
                 <div class="flex gap-3">
-                    
+
                     {% if habit.id in completed_today %}
                         <form method="POST" action="{% url 'toggle_habit' habit.id %}">
                             {% csrf_token %}
@@ -117,7 +125,6 @@
 </div>
 
 <!-- Weekly Heatmap -->
-<!-- TODO: connect in feat/habits-heatmap -->
 <div class="mt-8 rounded-3xl border border-neutral-800 bg-neutral-950/60 p-8">
 
     <h2 class="text-2xl font-semibold text-white">
@@ -139,7 +146,6 @@
 </div>
 
 <!-- Achievements -->
-<!-- TODO: connect in feat/habits-heatmap -->
 <div class="mt-8 rounded-3xl border border-neutral-800 bg-neutral-950/60 p-8">
 
     <h2 class="text-2xl font-semibold text-white">
@@ -167,4 +173,27 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+  const list = document.getElementById('habits-list')
+  
+  Sortable.create(list, {
+    animation: 150,
+    onEnd: function() {
+      const order = [...list.querySelectorAll('[data-id]')].map(el => el.dataset.id)
+      
+      fetch("{% url 'reorder_habits' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ order: order })
+      })
+    }
+  })
+</script>
 {% endblock %}

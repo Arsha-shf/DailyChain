@@ -5,18 +5,25 @@ from django.db import IntegrityError
 from .models import Habit, HabitLog
 from .forms import HabitForm
 from datetime import date, timedelta
+import json
+from django.http import JsonResponse
 
 @login_required
 def habits(request):
-    habits = Habit.objects.filter(user=request.user, is_active=True)
+    habits = Habit.objects.filter(user=request.user, is_active=True).order_by('order')
     today = date.today()
     completed_today = HabitLog.objects.filter(
         habit__user=request.user,
         date=today
     ).values_list('habit_id', flat=True)
+    completed_count = completed_today.count()
+    total_habits = habits.count()
+    pending_count = total_habits - completed_count
+
     return render(request, 'habits/habits.html', {
         'habits': habits,
-        'completed_today': completed_today
+        'completed_today': completed_today,
+        'pending_count': pending_count
     })
 
 @login_required
@@ -94,3 +101,18 @@ def habit_detail(request, habit_id):
             'logged_dates': logged_dates,
         }
     )
+
+@login_required
+def reorder_habits(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        habit_order = data["order"]
+        
+        for i, habit_id in enumerate(habit_order):
+            try:
+                habit = Habit.objects.get(id=habit_id, user=request.user)
+                habit.order = i
+                habit.save()
+            except Habit.DoesNotExist:
+                continue
+        return JsonResponse({"status": "ok"})

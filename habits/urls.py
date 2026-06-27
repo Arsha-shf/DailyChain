@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:habit_id>/delete/', views.delete_habit, name='delete_habit'),
     path('<int:habit_id>/toggle/', views.toggle_habit, name='toggle_habit'),
     path('<int:habit_id>/', views.habit_detail, name='habit_detail'),
+    path('reorder/', views.reorder_habits, name='reorder_habits'),
 ]

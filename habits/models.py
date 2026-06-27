@@ -21,8 +21,8 @@ class Habit(models.Model):
     frequency = models.CharField(
         max_length=20,
         choices=FrequencyChoices.choices,
-        default=FrequencyChoices.DAILY
-    )
+        default=FrequencyChoices.DAILY)
+    order = models.PositiveBigIntegerField(default=0)
 
     def current_streak(self):
         dates = set(
