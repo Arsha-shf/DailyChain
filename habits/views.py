@@ -10,7 +10,7 @@ from django.http import JsonResponse
 
 @login_required
 def habits(request):
-    habits = Habit.objects.filter(user=request.user, is_active=True).order_by('order')
+    habits = Habit.objects.filter(user=request.user,is_active=True).order_by('order').prefetch_related('habitlog_set')
     today = date.today()
     completed_today = HabitLog.objects.filter(
         habit__user=request.user,
@@ -107,7 +107,7 @@ def reorder_habits(request):
     if request.method == "POST":
         data = json.loads(request.body)
         habit_order = data["order"]
-        
+
         for i, habit_id in enumerate(habit_order):
             try:
                 habit = Habit.objects.get(id=habit_id, user=request.user)
