@@ -30,14 +30,15 @@
 
         <div data-id="{{ habit.id }}" class="rounded-2xl border border-neutral-800 bg-neutral-900 p-6 transition hover:border-indigo-500">
 
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start gap-6">
 
-                <div>
+                <!-- Clickable Left Side -->
+                <div
+                    class="flex-1 cursor-pointer rounded-xl p-2 -m-2 transition hover:bg-neutral-800/40"
+                    onclick="window.location='{% url 'habit_detail' habit.id %}'">
 
-                    <h3>
-                        <a href="{% url 'habit_detail' habit.id %}" class="text-lg font-semibold text-white hover:text-indigo-400">
-                            {{ habit.name }}
-                        </a>
+                    <h3 class="text-lg font-semibold text-white">
+                        {{ habit.name }}
                     </h3>
 
                     <div class="mt-3 flex flex-wrap gap-2">
@@ -59,6 +60,7 @@
 
                 </div>
 
+                <!-- Buttons -->
                 <div class="flex gap-3">
 
                     {% if habit.id in completed_today %}
@@ -177,23 +179,4 @@
 
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<script>
-  const list = document.getElementById('habits-list')
-  
-  Sortable.create(list, {
-    animation: 150,
-    onEnd: function() {
-      const order = [...list.querySelectorAll('[data-id]')].map(el => el.dataset.id)
-      
-      fetch("{% url 'reorder_habits' %}", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ order: order })
-      })
-    }
-  })
-</script>
 {% endblock %}
