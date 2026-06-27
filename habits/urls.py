@@ -9,4 +9,7 @@ urlpatterns = [
     path('<int:habit_id>/toggle/', views.toggle_habit, name='toggle_habit'),
     path('<int:habit_id>/', views.habit_detail, name='habit_detail'),
     path('reorder/', views.reorder_habits, name='reorder_habits'),
+    path('<int:habit_id>/archive/', views.archive_habit, name='archive_habit'),
+    path('<int:habit_id>/restore/', views.restore_habit, name='restore_habit'),
+    path('archived/', views.archived_habits, name='archived_habits'),
 ]
