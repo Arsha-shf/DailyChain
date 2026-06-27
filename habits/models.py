@@ -24,11 +24,11 @@ class Habit(models.Model):
         default=FrequencyChoices.DAILY)
     order = models.PositiveBigIntegerField(default=0)
 
+    def get_log_dates(self):
+        return sorted(log.date for log in self.habitlog_set.all())
+
     def current_streak(self):
-        dates = set(
-            HabitLog.objects.filter(habit=self)
-            .values_list('date', flat=True)
-        )
+        dates = set(self.get_log_dates())
         streak = 0
         current_day = date.today()
 
@@ -38,10 +38,7 @@ class Habit(models.Model):
         return streak
 
     def longest_streak(self):
-        dates = sorted(
-            HabitLog.objects.filter(habit=self)
-            .values_list('date', flat=True)
-        )
+        dates = self.get_log_dates()
         if not dates:
             return 0
         current_streak = 1
@@ -57,24 +54,22 @@ class Habit(models.Model):
         return longest_streak
 
     def total_completions(self):
-        logs = HabitLog.objects.filter(habit=self)
-        total = logs.count()
-        return total
+        return len(self.get_log_dates())
 
     def success_rate(self):
         week_ago = date.today() - timedelta(days=7)
-        completions = HabitLog.objects.filter(
-            habit=self,
-            date__gte=week_ago
-        ).count()
+        completions = sum(
+            1 for log_date in self.get_log_dates()
+            if log_date >= week_ago
+        )
         rate = (completions/7) * 100
         return round(min(rate, 100), 1)
 
     def best_day_of_week(self):
-        logs = HabitLog.objects.filter(habit=self)
+        dates = self.get_log_dates()
         weekdays=[]
-        for log in logs:
-            day = log.date.strftime("%A")
+        for log_date in dates:
+            day = log_date.strftime("%A")
             weekdays.append(day)
         if not weekdays:
             return None
