@@ -18,7 +18,7 @@ def test_toggle_habit_check_in_then_out(client_logged_in, habit):
 
 @pytest.mark.django_db
 def test_toggle_habit_saves_note(client_logged_in, habit):
-    response = client_logged_in.post(reverse('habit-toggle', args=[habit.id]), {
+    client_logged_in.post(reverse('habit-toggle', args=[habit.id]), {
         'note': 'Felt great today',
     })
     log = HabitLog.objects.get(habit=habit, date=timezone.now().date())
