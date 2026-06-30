@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DailyChain{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold text-white">DailyChain</a>
+        <div class="flex items-center gap-4">
+            {% if user.is_authenticated %}
+                <a href="/dashboard/" class="text-gray-300 hover:text-white">Dashboard</a>
+                <a href="/accounts/logout/" class="text-gray-300 hover:text-white">Logout</a>
+            {% else %}
+                <a href="/accounts/login/" class="text-gray-300 hover:text-white">Login</a>
+                <a href="/accounts/signup/" class="text-gray-300 hover:text-white">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="max-w-6xl mx-auto px-6 pt-4">
+            {% for message in messages %}
+                <div class="mb-3 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="px-6 py-8 max-w-6xl mx-auto">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load habit_extras %}
+{% block title %}{{ habit.name }} — DailyChain{% endblock %}
+{% block content %}
+
+<div class="mb-6">
+    <a href="{% url 'habit-list' %}" class="text-sm text-neutral-400 hover:text-white">
+        ← Back to Habits
+    </a>
+</div>
+
+<!-- Habit Info -->
+<div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 mb-6">
+    <h1 class="text-3xl font-bold text-white mb-2">
+        {{ habit.name }}
+    </h1>
+
+    {% if habit.description %}
+        <p class="text-gray-400">
+            {{ habit.description }}
+        </p>
+    {% endif %}
+</div>
+
+<!-- Streak Stats -->
+<div class="grid md:grid-cols-2 gap-4 mb-6">
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Current Streak
+        </p>
+
+        <div class="text-4xl font-bold text-indigo-400">
+            {{ habit.current_streak }}
+        </div>
+
+        <p class="text-gray-500 mt-2">
+            days
+        </p>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Longest Streak
+        </p>
+
+        <div class="text-4xl font-bold text-green-400">
+            {{ habit.longest_streak }}
+        </div>
+
+        <p class="text-gray-500 mt-2">
+            days
+        </p>
+    </div>
+
+</div>
+
+<!-- Analytics -->
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Total Completions
+        </p>
+
+        <div class="text-3xl font-bold text-indigo-400">
+            {{ habit.total_completions }}
+        </div>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Success Rate
+        </p>
+
+        <div class="text-3xl font-bold text-green-400">
+            {{ habit.success_rate }}%
+        </div>
+
+        <p class="text-gray-500 mt-2 text-sm">
+            last 7 days
+        </p>
+    </div>
+
+    <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <p class="text-gray-400 text-sm mb-2">
+            Best Day
+        </p>
+
+        <div class="text-3xl font-bold text-yellow-400">
+            {{ habit.best_day_of_week|default:"—" }}
+        </div>
+    </div>
+
+</div>
+
+<!-- Heatmap -->
+<div class="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+
+    <h2 class="text-xl font-semibold text-white mb-4">
+        Last 84 Days
+    </h2>
+
+    <div class="grid grid-cols-7 gap-1 w-fit">
+        {% for day in days %}
+            <div
+                class="h-4 w-4 rounded-sm {% if day in logged_dates %}bg-indigo-400{% else %}bg-neutral-800{% endif %}"
+                title="{{ logged_dates|get_item:day|default:'' }}">
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
