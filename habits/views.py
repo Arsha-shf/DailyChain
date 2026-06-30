@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from .models import Habit, HabitLog
 from .forms import HabitForm
 from datetime import date, timedelta
@@ -34,11 +34,12 @@ def create_habit(request):
             habit = form.save(commit=False)
             habit.user = request.user
             try:
-                habit.save()
+                with transaction.atomic():
+                    habit.save()
                 messages.success(request, 'Habit created successfully :)')
-                return redirect('habits')
+                return redirect('habit-list')
             except IntegrityError:
-                form.add_error(None ,'You already have a habit with this name and frequency!')
+                form.add_error(None, 'You already have a habit with this name and frequency!')
     else:
         form = HabitForm()
     return render(request, 'habits/create_habit.html', {'form': form})
@@ -49,9 +50,13 @@ def edit_habit(request, habit_id):
     if request.method == 'POST':
         form = HabitForm(request.POST, instance=habit)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Habit edited successfully :)')
-            return redirect('habits')
+            try:
+                with transaction.atomic():
+                    form.save()
+                messages.success(request, 'Habit edited successfully :)')
+                return redirect('habit-list')
+            except IntegrityError:
+                form.add_error(None, 'You already have a habit with this name and frequency!')
     else:
         form = HabitForm(instance=habit)
     return render(request, 'habits/edit_habit.html', {'form': form, 'habit_id': habit_id})
@@ -62,7 +67,7 @@ def delete_habit(request, habit_id):
     if request.method == 'POST':
         habit.delete()
         messages.success(request, 'Habit deleted successfully :)')
-        return redirect('habits')
+        return redirect('habit-list')
     return render(request, 'habits/delete_habit.html', {'habit': habit})
 
 @login_required
@@ -75,7 +80,7 @@ def toggle_habit(request, habit_id):
     else:
         note = request.POST.get("note", "").strip()
         HabitLog.objects.create(habit=habit, date=today, note=note)
-    return redirect('habits')
+    return redirect('habit-list')
 
 @login_required
 def habit_detail(request, habit_id):
@@ -91,30 +96,22 @@ def habit_detail(request, habit_id):
         'logged_dates': logged_dates,
     })
 
-    return render(
-        request,
-        'habits/habit_detail.html',
-        {
-            'habit': habit,
-            'days': days,
-            'logged_dates': logged_dates,
-        }
-    )
-
 @login_required
 def reorder_habits(request):
     if request.method == "POST":
         data = json.loads(request.body)
         habit_order = data["order"]
+        habits = Habit.objects.filter(id__in=habit_order, user=request.user)
+        if habits.count() != len(habit_order):
+            return JsonResponse({"error": "Invalid habit id"}, status=403)
 
+        habit_map = {h.id: h for h in habits}
         for i, habit_id in enumerate(habit_order):
-            try:
-                habit = Habit.objects.get(id=habit_id, user=request.user)
-                habit.order = i
-                habit.save()
-            except Habit.DoesNotExist:
-                continue
+            habit_map[habit_id].order = i
+            habit_map[habit_id].save()
+
         return JsonResponse({"status": "ok"})
+    return JsonResponse({"error": "POST required"}, status=405)
 
 @login_required
 def archive_habit(request, habit_id):
@@ -122,7 +119,7 @@ def archive_habit(request, habit_id):
     if request.method == 'POST':
         habit.is_active = False
         habit.save()
-        return redirect('habits')
+        return redirect('habit-list')
     return render(request, 'habits/archive_habit.html', {'habit': habit})
 
 @login_required
@@ -143,4 +140,4 @@ def restore_habit(request, habit_id):
     )
     habit.is_active = True
     habit.save()
-    return redirect("archived_habits")
+    return redirect("archived-habits")
