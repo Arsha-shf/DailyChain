@@ -1,7 +1,7 @@
 import pytest
 from freezegun import freeze_time
 from django.utils import timezone
-from habits.models import Habit, HabitLog
+from habits.models import HabitLog
 
 
 # CRITICAL FIX: freeze_time must wrap fixture creation too, not just the

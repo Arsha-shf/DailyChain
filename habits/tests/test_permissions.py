@@ -25,7 +25,7 @@ def test_other_user_cannot_toggle(second_client_logged_in, habit):
 def test_other_user_cannot_delete(second_client_logged_in, habit):
     response = second_client_logged_in.post(reverse('habit-delete', args=[habit.id]))
     assert response.status_code == 404
-    habit.refresh_from_db()  
+    habit.refresh_from_db()
 
 
 @pytest.mark.django_db
